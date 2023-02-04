@@ -40,3 +40,10 @@ class DiscourseFeedbackSerializer(ModelSerializer):
             discourse_feedback.update(feedback, feedback_metadata)
 
         return discourse_feedback
+
+
+class FeedbackSerializers(ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ["application", "feedback_id", "parent_feedback", "title", "description", "impact"]
+

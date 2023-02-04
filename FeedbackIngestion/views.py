@@ -1,17 +1,19 @@
 from django.shortcuts import render
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.generics import GenericAPIView
 from FeedbackIngestion.models import DiscourseFeedback, Feedback
-from FeedbackIngestion.serializers import DiscourseFeedbackSerializer
+from FeedbackIngestion.serializers import DiscourseFeedbackSerializer, FeedbackSerializers
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+
 # Create your views here.
 
 
-class DiscourseFeedbackViewSet(GenericViewSet):
+class DiscourseFeedbackView(GenericAPIView):
     serializer_class = DiscourseFeedbackSerializer
-
-    def get(self, request, *args, **kwargs):
-        pass
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         """
@@ -33,3 +35,15 @@ class DiscourseFeedbackViewSet(GenericViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class FeedbackListView(GenericAPIView):
+    serializer_class = FeedbackSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Feedback.objects.filter(application__client_id=self.request.user.id)
+
+    def get(self, request, *args, **kwargs):
+        feedbacks = self.get_queryset()
+        page = self.paginate_queryset(feedbacks)
+        serializer = self.get_serializer(page, many = True)
+        return self.get_paginated_response(serializer.data)

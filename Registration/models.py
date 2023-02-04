@@ -41,3 +41,10 @@ class DiscourseRegistration(Registration):
     Some other Discourse specific keys which helps to connect to Discourse
     """
     pass
+
+
+class IntercomRegistration(Registration):
+    """
+        Some other Discourse specific keys which helps to connect to Discourse
+    """
+    pass
