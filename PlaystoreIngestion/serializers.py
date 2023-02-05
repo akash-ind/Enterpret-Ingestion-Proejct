@@ -1,20 +1,18 @@
 from rest_framework.serializers import ModelSerializer
-from DiscourseIngestion.models import DiscourseFeedback
+from PlaystoreIngestion.models import PlaystoreFeedback
 from FeedbackIngestion.models import Feedback, FeedbackMetadata
 
 
-class DiscourseFeedbackSerializer(ModelSerializer):
-
+class PlaystoreFeedbackSerializer(ModelSerializer):
     class Meta:
-        model = DiscourseFeedback
+        model = PlaystoreFeedback
         fields = [
-            "application", "post_id", "username", "title", "description",
-            "parent_post_id", "like_count", "created_at_discourse",
-            "updated_at_discourse",
+            "application", "app_version", "review_id",
+            "parent_review_id", "username", "title", "description",
+            "ratings", "created_at_playstore", "updated_at_playstore"
         ]
 
     def populate_fields(self, instance, validated_data):
-        # Todo: Support Many to many fields:
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
@@ -32,20 +30,19 @@ class DiscourseFeedbackSerializer(ModelSerializer):
 
         validated_data = {**self.validated_data, **kwargs}
 
-        discourse_feedback = DiscourseFeedback()
-        self.populate_fields(discourse_feedback, validated_data)
+        playstore_feedback = PlaystoreFeedback()
+        self.populate_fields(playstore_feedback, validated_data)
         feedback = None
         feedback_metadata = None
         try:
-            feedback = Feedback.objects.get(feedback_id=discourse_feedback.get_post_id(discourse_feedback.post_id))
+            feedback = Feedback.objects.get(feedback_id=playstore_feedback.get_review_id(playstore_feedback.review_id))
             feedback_metadata = FeedbackMetadata.objects.get(feedback_id=feedback.feedback_id)
         except Feedback.DoesNotExist:
             pass
 
         if feedback:
-            discourse_feedback.update(feedback, feedback_metadata)
+            playstore_feedback.update(feedback, feedback_metadata)
         else:
-            discourse_feedback.save()
+            playstore_feedback.save()
 
-        return discourse_feedback
-
+        return playstore_feedback

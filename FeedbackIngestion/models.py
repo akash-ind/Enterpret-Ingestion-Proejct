@@ -1,6 +1,7 @@
 from django.db import models, transaction
 from DiscourseIngestion.constants import Constants
 
+
 # Create your models here.
 class TwitterFeedback(models.Model):
     SOURCE = 'S01'
@@ -13,14 +14,38 @@ class IntercomFeedback(models.Model):
     pass
 
 
-class PlaystoreFeedback(models.Model):
-    SOURCE = 'S03'
 
-    review_id = models.BigIntegerField(null=True, blank=True)
-    username = models.TextField(null=True, blank=True)
-    review_title = models.TextField(null=True, blank=True)
-    review_description = models.TextField(null=True, blank=True)
-    ratings = models.IntegerField(null=True, blank=True)
+class BaseIngestion(models.Model):
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """
+        Save the feedback model from this
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        raise NotImplementedError("Implement to save feedback model transforming the data")
+
+    def update(self, *args, **kwargs):
+        """
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        raise NotImplementedError("Implement to update feedback model transforming the data")
+
+    @staticmethod
+    def transform_api_data(*args, **kwargs):
+        """
+        :param args:
+        :param kwargs:
+        :return: Class Object
+        """
+        raise NotImplementedError("Implement to transform the API data to object")
 
 
 class Feedback(models.Model):
@@ -38,7 +63,7 @@ class Feedback(models.Model):
     impact = models.IntegerField()  # todo: Check if the naming is correct
 
     class Meta:
-        ordering = ("-feedback_id", )
+        ordering = ("-feedback_id",)
 
     def __str__(self):
         return self.title
@@ -57,12 +82,11 @@ class FeedbackMetadata(models.Model):
     ]
 
     # duplicated as it might improve performance
-    application = models.ForeignKey('Client.Application', on_delete=models.CASCADE)
     app_version = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     username = models.TextField(null=True, blank=True)
     source = models.CharField(choices=source_choices, max_length=100)
-    feedback = models.ForeignKey('FeedbackIngestion.Feedback', on_delete=models.CASCADE)
+    feedback = models.OneToOneField('FeedbackIngestion.Feedback', on_delete=models.CASCADE)
     language = models.CharField(max_length=5000, null=True, blank=True)
     # Timestamps at which feedback created or updated on their respective platform
     feedback_created_timestamp = models.DateTimeField()

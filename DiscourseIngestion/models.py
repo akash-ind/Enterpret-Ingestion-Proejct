@@ -1,10 +1,11 @@
 from django.db import models, transaction
-from FeedbackIngestion.models import Feedback, FeedbackMetadata
+from FeedbackIngestion.models import Feedback, FeedbackMetadata, BaseIngestion
 from DiscourseIngestion.constants import Constants
+from datetime import datetime
 
 
 # Create your models here.
-class DiscourseFeedback(models.Model):
+class DiscourseFeedback(BaseIngestion):
     """
     Feedback ingested from Discourse
     """
@@ -25,7 +26,7 @@ class DiscourseFeedback(models.Model):
         Concatenation of source and post_id
         :return:str
         """
-        return "-".join([self.SOURCE, self.application_id, post_id])
+        return "-".join([self.SOURCE, str(self.application_id), str(post_id)])
 
     def sync_feedback(self, feedback):
         """
@@ -46,7 +47,6 @@ class DiscourseFeedback(models.Model):
         :param feedback_metadata: FeedbackMetadata
         :return: FeedbackMetadata
         """
-        feedback_metadata.application = self.application
         feedback_metadata.source = self.SOURCE
         feedback_metadata.username = self.username
         feedback_metadata.feedback_id = self.get_post_id(self.post_id)
@@ -73,6 +73,7 @@ class DiscourseFeedback(models.Model):
             discourse_feedback_info = DiscourseFeedbackInfo()
             discourse_feedback_info.application_id = self.application_id
             discourse_feedback_info.last_post_timestamp = self.created_at_discourse
+            print(discourse_feedback_info.last_post_timestamp)
             discourse_feedback_info.save()
 
     def update(self, feedback, feedback_metadata):
@@ -91,6 +92,7 @@ class DiscourseFeedback(models.Model):
             discourse_feedback_info = DiscourseFeedbackInfo()
             discourse_feedback_info.application_id = self.application_id
             discourse_feedback_info.last_post_timestamp = self.updated_at_discourse
+            print(discourse_feedback_info.last_post_timestamp)
             discourse_feedback_info.save()
 
     @staticmethod
@@ -108,7 +110,10 @@ class DiscourseFeedback(models.Model):
         discourse_feedback.description = data.get('blurb')
         discourse_feedback.like_count = data.get('like_count')
         discourse_feedback.created_at_discourse = data.get('created_at')
+        print(discourse_feedback.created_at_discourse, data.get('created_at'))
+
         discourse_feedback.updated_at_discourse = data.get('updated_at', discourse_feedback.created_at_discourse)
+        print(discourse_feedback)
         return discourse_feedback
 
 
@@ -119,7 +124,7 @@ class DiscourseFeedbackInfo(models.Model):
     in the next hit.
     """
     application = models.ForeignKey('Client.Application', on_delete=models.CASCADE)
-    last_post_timestamp = models.DateField()  # get the posts after this timestamp
+    last_post_timestamp = models.DateTimeField()  # get the posts after this timestamp
 
     @staticmethod
     def get_last_post_timestamp(application_id):

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'rest_framework',
     'rest_framework.authtoken',
     'Client',
@@ -101,6 +102,10 @@ DATABASES = {
     }
 }
 
+
+CRONJOBS = [
+    ('*/1 * * * *', 'DiscourseIngestion.DiscourseIngestor.ingest_job', '>> /discourse_ingestion.log')
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

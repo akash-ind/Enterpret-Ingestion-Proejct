@@ -1,16 +1,20 @@
 from DiscourseIngestion.DiscourseIngestor.fetch import FetchDiscourseFeedback
 from DiscourseIngestion.models import DiscourseFeedback
 from Registration.models import DiscourseRegistration
-
+import sys
 
 class IngestDiscourseFeedback:
 
     # Todo: Optimise for Asynchronous Execution
     def ingest(self, application_id):
         data = FetchDiscourseFeedback().get(application_id)
-        for post in data.posts:
+        for post in data.get("posts"):
             discourse_feedback = DiscourseFeedback.transform_api_data(post, application_id)
-            discourse_feedback.save()
+            try:
+                discourse_feedback.save()
+            except Exception as e:
+                print(e)
+            print("saved", discourse_feedback.post_id)
 
 
 def ingest_job():
