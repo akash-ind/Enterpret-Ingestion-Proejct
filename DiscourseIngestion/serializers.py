@@ -14,7 +14,6 @@ class DiscourseFeedbackSerializer(ModelSerializer):
         ]
 
     def populate_fields(self, instance, validated_data):
-        # Todo: Support Many to many fields:
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 

@@ -1,15 +1,16 @@
 from django.db import models, transaction
 from FeedbackIngestion.models import BaseIngestion, FeedbackMetadata, Feedback
+from Enterpret.constants import Constants
 # Create your models here.
 
 
 class PlaystoreFeedback(BaseIngestion):
-    SOURCE = 'S03'
+    SOURCE = Constants.playstore_source
 
     application = models.ForeignKey('Client.Application', on_delete=models.CASCADE)
-    app_version = models.CharField(null=True, blank=True)
-    review_id = models.CharField()
-    parent_review_id = models.CharField(null=True, blank=True)
+    app_version = models.CharField(max_length=100, null=True, blank=True)
+    review_id = models.CharField(max_length=100)
+    parent_review_id = models.CharField(max_length=100, null=True, blank=True)
     username = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -47,6 +48,7 @@ class PlaystoreFeedback(BaseIngestion):
         feedback_metadata.username = self.username
         feedback_metadata.feedback_id = self.get_review_id(self.review_id)
         feedback_metadata.language = 'english'  # Can be optimised with coding for languages
+        feedback_metadata.app_version = self.app_version
         feedback_metadata.feedback_created_timestamp = self.created_at_playstore
         feedback_metadata.feedback_updated_timestamp = self.updated_at_playstore or self.created_at_playstore
         return feedback_metadata

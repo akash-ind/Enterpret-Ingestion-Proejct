@@ -1,18 +1,5 @@
-from django.db import models, transaction
-from DiscourseIngestion.constants import Constants
-
-
-# Create your models here.
-class TwitterFeedback(models.Model):
-    SOURCE = 'S01'
-    pass
-
-
-class IntercomFeedback(models.Model):
-    SOURCE = 'S02'
-
-    pass
-
+from django.db import models
+from Enterpret.constants import Constants
 
 
 class BaseIngestion(models.Model):
@@ -66,7 +53,7 @@ class Feedback(models.Model):
         ordering = ("-feedback_id",)
 
     def __str__(self):
-        return self.title
+        return self.title or ''
 
 
 class FeedbackMetadata(models.Model):
@@ -75,10 +62,10 @@ class FeedbackMetadata(models.Model):
     """
 
     source_choices = [
-        ('playstore', 'PlayStore'),
-        ('twitter', 'Twitter'),
-        ('intercom', 'Intercom'),
-        (Constants.source, 'Discourse')
+        (Constants.playstore_source, 'PlayStore'),
+        (Constants.twitter_source, 'Twitter'),
+        (Constants.intercom_source, 'Intercom'),
+        (Constants.discourse_source, 'Discourse')
     ]
 
     # duplicated as it might improve performance
@@ -91,3 +78,6 @@ class FeedbackMetadata(models.Model):
     # Timestamps at which feedback created or updated on their respective platform
     feedback_created_timestamp = models.DateTimeField()
     feedback_updated_timestamp = models.DateTimeField()
+
+    def __str__(self):
+        return self.source + (self.feedback.title or '')

@@ -1,20 +1,20 @@
 from DiscourseIngestion.models import DiscourseFeedbackInfo
-from DiscourseIngestion.constants import Constants
+from Enterpret.constants import Constants
 import requests
+
+
+def get_query_params(starting_date):
+    return {
+        'page': 1,
+        'q': 'after: {}'.format(starting_date)
+    }
 
 
 class FetchDiscourseFeedback:
     url = 'https://meta.discourse.org/search.json'
 
-    def get_query_params(self, starting_date):
-        return {
-            'page': 1,
-            'q': 'after: {}'.format(starting_date)
-        }
-
     def fetch_from_discourse(self, starting_date):
-        data = requests.get(self.url, self.get_query_params(starting_date))
-        print(data.json())
+        data = requests.get(self.url, get_query_params(starting_date))
         return data.json()
 
     def get(self, application_id):

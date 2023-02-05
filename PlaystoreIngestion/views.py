@@ -10,7 +10,7 @@ from rest_framework import status
 
 
 # Create your views here.
-class DiscourseFeedbackView(GenericAPIView):
+class PlaystoreFeedbackView(GenericAPIView):
     serializer_class = PlaystoreFeedbackSerializer
     permission_classes = [IsAuthenticated]
 

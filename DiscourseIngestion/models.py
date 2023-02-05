@@ -1,7 +1,6 @@
 from django.db import models, transaction
 from FeedbackIngestion.models import Feedback, FeedbackMetadata, BaseIngestion
-from DiscourseIngestion.constants import Constants
-from datetime import datetime
+from Enterpret.constants import Constants
 
 
 # Create your models here.
@@ -9,7 +8,7 @@ class DiscourseFeedback(BaseIngestion):
     """
     Feedback ingested from Discourse
     """
-    SOURCE = Constants.source
+    SOURCE = Constants.discourse_source
 
     application = models.ForeignKey('Client.Application', on_delete=models.CASCADE)
     post_id = models.TextField()
@@ -73,7 +72,6 @@ class DiscourseFeedback(BaseIngestion):
             discourse_feedback_info = DiscourseFeedbackInfo()
             discourse_feedback_info.application_id = self.application_id
             discourse_feedback_info.last_post_timestamp = self.created_at_discourse
-            print(discourse_feedback_info.last_post_timestamp)
             discourse_feedback_info.save()
 
     def update(self, feedback, feedback_metadata):
@@ -92,7 +90,6 @@ class DiscourseFeedback(BaseIngestion):
             discourse_feedback_info = DiscourseFeedbackInfo()
             discourse_feedback_info.application_id = self.application_id
             discourse_feedback_info.last_post_timestamp = self.updated_at_discourse
-            print(discourse_feedback_info.last_post_timestamp)
             discourse_feedback_info.save()
 
     @staticmethod
@@ -110,10 +107,8 @@ class DiscourseFeedback(BaseIngestion):
         discourse_feedback.description = data.get('blurb')
         discourse_feedback.like_count = data.get('like_count')
         discourse_feedback.created_at_discourse = data.get('created_at')
-        print(discourse_feedback.created_at_discourse, data.get('created_at'))
 
         discourse_feedback.updated_at_discourse = data.get('updated_at', discourse_feedback.created_at_discourse)
-        print(discourse_feedback)
         return discourse_feedback
 
 
@@ -135,3 +130,7 @@ class DiscourseFeedbackInfo(models.Model):
         return DiscourseFeedbackInfo.objects.filter(application__id=application_id) \
             .order_by('-last_post_timestamp') \
             .first()
+
+
+    def __str__(self):
+        return self.application

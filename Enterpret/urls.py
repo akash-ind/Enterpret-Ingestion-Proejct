@@ -16,6 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Feedback Ingestion API",
+      default_version='v1',
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +36,6 @@ urlpatterns = [
     path('api/v1/registration/', include('Registration.urls')),
     path('api/v1/feedback/', include('FeedbackIngestion.urls')),
     path('api/v1/discourse/', include('DiscourseIngestion.urls')),
+    path('api/v1/playstore/', include('PlaystoreIngestion.urls')),
+    path('swagger/', schema_view.with_ui('swagger')),
 ]

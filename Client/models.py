@@ -7,6 +7,9 @@ from django.contrib.auth.models import AbstractUser
 class Client(AbstractUser):
     company_name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.username
+
 
 class Application(models.Model):
     app_name = models.CharField(max_length=255)

@@ -24,7 +24,6 @@ class Registration(models.Model):
         return cls.objects.get(app_id=app_id).integration_type
 
 
-
 class PlayStoreRegistration(Registration):
     """
     Some other Play store specific keys and values which will help in connecting
