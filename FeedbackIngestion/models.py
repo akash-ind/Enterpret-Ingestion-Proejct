@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 
 
 # Create your models here.
@@ -22,9 +22,6 @@ class PlaystoreFeedback(models.Model):
     review_description = models.TextField(null=True, blank=True)
     ratings = models.IntegerField(null=True, blank=True)
 
-    class Meta:
-        abstract = True
-
 
 class DiscourseFeedback(models.Model):
     """
@@ -40,10 +37,7 @@ class DiscourseFeedback(models.Model):
     parent_post_id = models.TextField(null=True, blank=True)
     like_count = models.IntegerField(null=True, blank=True)
     created_at_discourse = models.DateTimeField()
-    updated_at_discourse = models.DateTimeField()
-
-    class Meta:
-        abstract = True
+    updated_at_discourse = models.DateTimeField(null=True, blank=True)
 
     def get_post_id(self, post_id):
         """
@@ -77,7 +71,7 @@ class DiscourseFeedback(models.Model):
         feedback_metadata.feedback_id = self.get_post_id(self.post_id)
         feedback_metadata.language = 'english'  # Can be optimised with coding for languages
         feedback_metadata.feedback_created_timestamp = self.created_at_discourse
-        feedback_metadata.feedback_updated_timestamp = self.updated_at_discourse
+        feedback_metadata.feedback_updated_timestamp = self.updated_at_discourse or self.created_at_discourse
         return feedback_metadata
 
     def save(self, *args, **kwargs):
@@ -88,16 +82,17 @@ class DiscourseFeedback(models.Model):
         :param kwargs:
         :return:
         """
-        feedback = self.sync_feedback(Feedback())
-        feedback.save()
+        with transaction.atomic():
+            feedback = self.sync_feedback(Feedback())
+            feedback.save()
 
-        feedback_metadata = self.sync_feedback_metadata(FeedbackMetadata())
-        feedback_metadata.save()
+            feedback_metadata = self.sync_feedback_metadata(FeedbackMetadata())
+            feedback_metadata.save()
 
-        discourse_feedback_info = DiscourseFeedbackInfo()
-        discourse_feedback_info.application_id = self.application_id
-        discourse_feedback_info.last_post_timestamp = self.created_at_discourse
-        discourse_feedback_info.save()
+            discourse_feedback_info = DiscourseFeedbackInfo()
+            discourse_feedback_info.application_id = self.application_id
+            discourse_feedback_info.last_post_timestamp = self.created_at_discourse
+            discourse_feedback_info.save()
 
     def update(self, feedback, feedback_metadata):
         """
@@ -106,13 +101,19 @@ class DiscourseFeedback(models.Model):
         :param feedback_metadata: FeedbackMetadata
         :return:
         """
-        feedback = self.sync_feedback(feedback)
-        feedback.save()
-        feedback_metadata = self.sync_feedback_metadata(feedback_metadata)
-        feedback_metadata.save()
+        with transaction.atomic():
+            feedback = self.sync_feedback(feedback)
+            feedback.save()
+            feedback_metadata = self.sync_feedback_metadata(feedback_metadata)
+            feedback_metadata.save()
+
+            discourse_feedback_info = DiscourseFeedbackInfo()
+            discourse_feedback_info.application_id = self.application_id
+            discourse_feedback_info.last_post_timestamp = self.updated_at_discourse
+            discourse_feedback_info.save()
 
     @staticmethod
-    def transform(data, application_id):
+    def transform_api_data(data, application_id):
         """
         :param application_id: The application we are adding data to
         :param data: API data Dict
@@ -143,6 +144,12 @@ class Feedback(models.Model):
     title = models.TextField(null=True, blank=True)
     description = models.TextField()
     impact = models.IntegerField()  # todo: Check if the naming is correct
+
+    class Meta:
+        ordering = ("-feedback_id", )
+
+    def __str__(self):
+        return self.title
 
 
 class FeedbackMetadata(models.Model):

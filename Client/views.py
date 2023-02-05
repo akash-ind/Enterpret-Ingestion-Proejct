@@ -54,6 +54,9 @@ class RegisterUser(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            client = serializer.save()
+            data = serializer.data
+            token, created = Token.objects.get_or_create(user=client)
+            data['token'] = token.key
+            return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

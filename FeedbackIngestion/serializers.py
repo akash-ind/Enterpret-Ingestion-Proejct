@@ -3,10 +3,14 @@ from FeedbackIngestion.models import DiscourseFeedback, Feedback, FeedbackMetada
 
 
 class DiscourseFeedbackSerializer(ModelSerializer):
+
     class Meta:
         model = DiscourseFeedback
-        fields = "__all__"
-        abstract = True
+        fields = [
+            "application", "post_id", "username", "title", "description",
+            "parent_post_id", "like_count", "created_at_discourse",
+            "updated_at_discourse",
+        ]
 
     def populate_fields(self, instance, validated_data):
         # Todo: Support Many to many fields:
@@ -34,10 +38,9 @@ class DiscourseFeedbackSerializer(ModelSerializer):
             pass
 
         if feedback:
-            discourse_feedback.save()
-
-        else:
             discourse_feedback.update(feedback, feedback_metadata)
+        else:
+            discourse_feedback.save()
 
         return discourse_feedback
 

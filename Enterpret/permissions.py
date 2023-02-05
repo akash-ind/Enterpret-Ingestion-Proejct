@@ -9,3 +9,4 @@ class Permission:
         client = request.user
         if not Application.objects.filter(client_id=client.id).exists():
             raise HttpResponseBadRequest("Application cannot be accessed")
+        return True

@@ -11,13 +11,18 @@ class Registration(models.Model):
         (PULL_MODEL, 'PULL MODEL'),
         (PUSH_MODEL, 'PUSH MODEL')
     ]
-    app = models.ForeignKey('Client.Application', on_delete=models.CASCADE)
-    access_id = models.CharField(max_length=5000, null=True)
-    secret_key = models.CharField(max_length=5000, null=True)
+    app = models.OneToOneField('Client.Application', unique=True, on_delete=models.CASCADE)
+    access_id = models.CharField(max_length=5000, null=True, blank=True)
+    secret_key = models.CharField(max_length=5000, null=True, blank=True)
     integration_type = models.CharField(choices=INTEGRATION_TYPE_CHOICES, max_length=3)
 
     class Meta:
         abstract = True
+
+    @classmethod
+    def get_integration_type(cls, app_id):
+        return cls.objects.get(app_id=app_id).integration_type
+
 
 
 class PlayStoreRegistration(Registration):
