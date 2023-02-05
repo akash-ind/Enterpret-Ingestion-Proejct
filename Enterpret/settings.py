@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'Client',
     'FeedbackIngestion',
+    'DiscourseIngestion',
     'Registration',
 ]
 

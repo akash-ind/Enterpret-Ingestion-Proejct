@@ -1,5 +1,5 @@
-from FeedbackIngestion.DiscourseIngestor.fetch import FetchDiscourseFeedback
-from FeedbackIngestion.models import DiscourseFeedback
+from DiscourseIngestion.DiscourseIngestor.fetch import FetchDiscourseFeedback
+from DiscourseIngestion.models import DiscourseFeedback
 from Registration.models import DiscourseRegistration
 
 

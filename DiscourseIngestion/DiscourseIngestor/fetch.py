@@ -1,5 +1,5 @@
-from FeedbackIngestion.models import DiscourseFeedbackInfo
-from FeedbackIngestion.DiscourseIngestor.constants import Constants
+from DiscourseIngestion.models import DiscourseFeedbackInfo
+from DiscourseIngestion.constants import Constants
 import requests
 
 

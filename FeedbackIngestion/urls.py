@@ -1,7 +1,6 @@
 from django.urls import path
-from FeedbackIngestion.views import DiscourseFeedbackView, FeedbackListView
+from FeedbackIngestion.views import FeedbackListView
 
 urlpatterns = [
-    path('discourse/', DiscourseFeedbackView.as_view()),
     path('feedback/', FeedbackListView.as_view()),
 ]
