@@ -1,7 +1,6 @@
 from DiscourseIngestion.DiscourseIngestor.fetch import FetchDiscourseFeedback
 from DiscourseIngestion.models import DiscourseFeedback
 from Registration.models import DiscourseRegistration
-import sys
 
 
 class IngestDiscourseFeedback:

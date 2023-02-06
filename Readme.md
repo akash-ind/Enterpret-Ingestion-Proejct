@@ -1,5 +1,9 @@
 # Documentation:
 
+## Flow:
+
+![Untitled](Readme static/Untitled.png)
+
 ## Get Started:
 
 1. Install Python and Go to project Root, i.e directory where manage.py lies.
@@ -9,12 +13,13 @@
 5. Run python3 manage.py runserver
 6. Go to [localhost:8000/swagger](http://localhost:8000/swagger) for API documentation.
 7. Please keep a note of base url /api/v1.
+8. Swagger Authentication not enabled so please use Postman to hit APIs.
 
 ## Requirement Addressed:
 
 1. Heterogenous Feedback Sources - Supported this by adding multiple sources such as, 
 PlayStore, twitter, Discourse, and Intercom.
-2. Push and Pull Integration model: Added this facility while registering app to any source.
+2. Push and Pull Integration model: An app can have any of two type when registering to any source.
 3. Multi-Tenancy - Single Application can be used by multiple Clients
 4. Transformation to a uniform internal structure - 
     1. Everything transformed to some fields that is the impact, title and description from the respective feedbacks from different sources.
@@ -37,5 +42,5 @@ PlayStore, twitter, Discourse, and Intercom.
 
 ### Better implementation of the Pull model:
 
-1. Pulling is an important part of application, we must be aware about any errors or progress. We should be using Airflow schedulers to run for every application and return us the successful or failed notification for every task.
+1. Pulling is an important part of application, we must be aware about any errors or progress. We should be using something like Airflow schedulers to run for every application and return us the successful or failed notification for every task.
 2. Ingestion can be asynchronous in nature.
