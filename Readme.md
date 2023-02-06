@@ -2,7 +2,7 @@
 
 ## Flow:
 
-![Untitled](Readme static/Untitled.png)
+<img width="705" alt="image" src="https://user-images.githubusercontent.com/52848850/216908186-94db0ff1-f246-4173-8b1a-a0fd293fa863.png">
 
 ## Get Started:
 
