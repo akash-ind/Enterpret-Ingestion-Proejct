@@ -5,7 +5,8 @@ from Client.models import Application, Client
 class ApplicationSerializer(ModelSerializer):
     class Meta:
         model = Application
-        fields = ['app_name']
+        fields = ['app_name', 'id']
+
 
 
 class ClientSerializer(ModelSerializer):

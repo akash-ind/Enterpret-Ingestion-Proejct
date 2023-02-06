@@ -24,6 +24,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Feedback Ingestion API",
       default_version='v1',
+      url='/api/v1',
    ),
    public=True,
    permission_classes=[permissions.AllowAny],

@@ -11,7 +11,7 @@ class Registration(models.Model):
         (PULL_MODEL, 'PULL MODEL'),
         (PUSH_MODEL, 'PUSH MODEL')
     ]
-    app = models.OneToOneField('Client.Application', unique=True, on_delete=models.CASCADE)
+    application = models.OneToOneField('Client.Application', unique=True, on_delete=models.CASCADE)
     access_id = models.CharField(max_length=5000, null=True, blank=True)
     secret_key = models.CharField(max_length=5000, null=True, blank=True)
     integration_type = models.CharField(choices=INTEGRATION_TYPE_CHOICES, max_length=3)

@@ -8,6 +8,7 @@
 4. Run python3 manage.py migrate
 5. Run python3 manage.py runserver
 6. Go to [localhost:8000/swagger](http://localhost:8000/swagger) for API documentation.
+7. Please keep a note to add /api/v1 to every URL.
 
 ## Requirement Addressed:
 

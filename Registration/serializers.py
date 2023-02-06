@@ -9,7 +9,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class PlayStoreRegistrationSerializer(RegistrationSerializer):
     class Meta:
         model = PlayStoreRegistration
-        fields = ['app', 'access_id', 'secret_key', 'integration_type']
+        fields = ['application', 'access_id', 'secret_key', 'integration_type']
         extra_kwargs = {
             'secret_key': {'write_only': True}
         }
@@ -18,7 +18,7 @@ class PlayStoreRegistrationSerializer(RegistrationSerializer):
 class TwitterRegistrationSerializer(RegistrationSerializer):
     class Meta:
         model = TwitterRegistration
-        fields = ['app', 'access_id', 'secret_key']
+        fields = ['application', 'access_id', 'secret_key', 'integration_type']
         extra_kwargs = {
             'secret_key': {'write_only': True}
         }
@@ -27,7 +27,7 @@ class TwitterRegistrationSerializer(RegistrationSerializer):
 class DiscourseRegistrationSerializer(RegistrationSerializer):
     class Meta:
         model = DiscourseRegistration
-        fields = ['app', 'access_id', 'secret_key']
+        fields = ['application', 'access_id', 'secret_key', 'integration_type']
         extra_kwargs = {
             'secret_key': {'write_only': True}
         }
@@ -36,7 +36,7 @@ class DiscourseRegistrationSerializer(RegistrationSerializer):
 class IntercomRegistrationSerializer(RegistrationSerializer):
     class Meta:
         model = DiscourseRegistration
-        fields = ['app', 'access_id', 'secret_key']
+        fields = ['application', 'access_id', 'secret_key', 'integration_type']
         extra_kwargs = {
             'secret_key': {'write_only': True}
         }
